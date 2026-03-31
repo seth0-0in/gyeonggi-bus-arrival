@@ -12,12 +12,10 @@ app = FastAPI()
 API_KEY = os.environ.get("GYEONGGI_API_KEY")
 DB_NAME = "bus_arrival.db"
 
-# 공식 매뉴얼에 맞춘 정확한 v2 주소들
 STATION_API_URL = "https://apis.data.go.kr/6410000/busstationservice/v2/getBusStationListv2"
 ARRIVAL_API_URL = "https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalListv2"
 ROUTE_API_URL = "https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteInfoItemv2"
 
-# 꼼수용 데이터 싹 지웠습니다. 오직 API에서 받아온 진짜 정보만 임시 저장합니다.
 name_cache = {}
 
 def init_db():
@@ -41,7 +39,6 @@ def get_route_name(route_id: str):
     if route_id in name_cache:
         return name_cache[route_id]
     
-    # 💡 format=json 파라미터로 정확하게 요청
     url = f"{ROUTE_API_URL}?serviceKey={API_KEY}&routeId={route_id}&format=json"
     try:
         response = requests.get(url, timeout=3)
@@ -56,7 +53,6 @@ def get_route_name(route_id: str):
     return route_id 
 
 def fetch_station_id_by_name(station_name: str):
-    # 꼼수 우회 로직 완전 삭제! 입력받은 이름 그대로 진짜 API에 정직하게 검색 요청합니다.
     encoded_name = urllib.parse.quote(station_name)
     url = f"{STATION_API_URL}?serviceKey={API_KEY}&keyword={encoded_name}&format=json"
     
